@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ShortnerBypass — ProviderBotz</title>
+  <meta name="description" content="Production-ready Telegram Auto Link Bypass Bot and Telegram Mini App powered by ProviderBotz.">
+  <meta property="og:title" content="ShortnerBypass — ProviderBotz">
+  <meta property="og:description" content="Production-ready Telegram Auto Link Bypass Bot and Telegram Mini App powered by ProviderBotz.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #060507;
+      --bg-surface: #0e0a0d;
+      --bg-card: rgba(22, 13, 17, 0.72);
+      --bg-glass: rgba(30, 16, 22, 0.55);
+      
+      /* Semantic Colors */
+      --accent-red: #ef4444;
+      --accent-red-glow: rgba(239, 68, 68, 0.4);
+      --accent-crimson: #dc2626;
+      --accent-dark-red: #7f1d1d;
+      
+      --color-primary: #ef4444;
+      --color-primary-end: #b91c1c;
+      --color-primary-glow: rgba(239, 68, 68, 0.45);
+
+      --color-success: #10b981;
+      --color-success-end: #059669;
+      --color-success-glow: rgba(16, 185, 129, 0.4);
+
+      --color-danger: #dc2626;
+      --color-danger-end: #991b1b;
+      --color-danger-glow: rgba(220, 38, 38, 0.4);
+
+      --color-channel: #8b5cf6;
+      --color-channel-end: #6366f1;
+      --color-channel-glow: rgba(139, 92, 246, 0.45);
+
+      --border-subtle: rgba(239, 68, 68, 0.16);
+      --border-glow: rgba(239, 68, 68, 0.45);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(220, 38, 38, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 85% 90%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(15, 10, 13, 0.8) 0%, var(--bg-main) 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 14px 28px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 480px;
+      height: 280px;
+      background: radial-gradient(ellipse, rgba(239, 68, 68, 0.18), transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header */
+    .header-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px 18px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(239, 68, 68, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-red), transparent);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2a0b12, #16080c);
+      border: 1px solid var(--border-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 16px var(--accent-red-glow);
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      background: linear-gradient(120deg, #ffffff, #fca5a5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .brand-text .small-caps-subtitle {
+      font-size: 0.72rem;
+      color: #ef4444;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 5px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #34d399;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--color-success);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--color-success);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+
+    /* Main Action Card */
+    .action-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px 18px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .input-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .url-input {
+      width: 100%;
+      background: rgba(8, 5, 7, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 44px 14px 16px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .url-input:focus {
+      border-color: var(--accent-red);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18), 0 0 16px var(--accent-red-glow);
+    }
+
+    .url-input::placeholder {
+      color: var(--text-dim);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .input-action-btn {
+      position: absolute;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      padding: 6px 9px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .input-action-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       SEMANTIC COLORED BUTTON SYSTEM (PRIMARY, SUCCESS, DANGER, CHANNEL)
+       ══════════════════════════════════════════════════════════ */
+    .btn {
+      width: 100%;
+      padding: 14px 18px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1.5px);
+      filter: brightness(1.1);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(1px);
+      filter: brightness(0.95);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* PRIMARY: Ruby / Crimson Gradient */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-end) 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 22px var(--color-primary-glow);
+    }
+
+    /* SUCCESS: Emerald Green Gradient */
+    .btn-success {
+      background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-end) 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 22px var(--color-success-glow);
+    }
+
+    /* DANGER: Crimson Red */
+    .btn-danger {
+      background: linear-gradient(135deg, var(--color-danger) 0%, var(--color-danger-end) 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 22px var(--color-danger-glow);
+    }
+
+    /* CHANNEL: Vibrant Purple/Violet Gradient */
+    .btn-channel {
+      background: linear-gradient(135deg, var(--color-channel) 0%, var(--color-channel-end) 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 24px var(--color-channel-glow);
+    }
+
+    /* OUTLINE / GHOST */
+    .btn-outline {
+      background: transparent;
+      border: 1px dashed rgba(255, 255, 255, 0.16);
+      color: var(--text-muted);
+    }
+    .btn-outline:hover {
+      border-color: var(--border-glow);
+      color: #ffffff;
+    }
+
+    /* Supported Providers Badge Bar */
+    .providers-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    .providers-list {
+      display: flex;
+      gap: 8px;
+    }
+
+    .provider-tag {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+
+    /* Loading Progress State */
+    .progress-box {
+      display: none;
+      background: rgba(14, 8, 11, 0.9);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .progress-box.active {
+      display: block;
+    }
+
+    .progress-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(239, 68, 68, 0.2);
+      border-top-color: var(--accent-red);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .progress-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fecaca;
+    }
+
+    .progress-step-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+
+    .progress-bar-track {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 25%;
+      background: linear-gradient(90deg, #ef4444, #f87171);
+      border-radius: 10px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 10px var(--accent-red);
+    }
+
+    /* Result Card */
+    .result-card {
+      display: none;
+      background: linear-gradient(145deg, rgba(26, 12, 16, 0.88), rgba(16, 8, 11, 0.96));
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65), 0 0 24px rgba(239, 68, 68, 0.18);
+      animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .result-card.active {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .result-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .result-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .meta-tag {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+    }
+
+    .url-display-box {
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .url-label {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    .url-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: #f87171;
+      word-break: break-all;
+      user-select: all;
+      line-height: 1.4;
+      text-decoration: none;
+    }
+
+    .url-orig-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      color: var(--text-dim);
+      word-break: break-all;
+      text-decoration: line-through;
+    }
+
+    /* Result Actions Layout */
+    .result-actions-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .action-row-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Error Card */
+    .error-card {
+      display: none;
+      background: rgba(30, 10, 12, 0.85);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      animation: fadeIn 0.3s ease;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .error-card.active {
+      display: flex;
+    }
+
+    .error-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #f87171;
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .error-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ProviderBotz Channel Promo Card */
+    .channel-banner {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(99, 102, 241, 0.16));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .channel-banner-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .channel-banner-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #e0e7ff;
+    }
+
+    .channel-banner-sub {
+      font-size: 0.74rem;
+      color: #a5b4fc;
+    }
+
+    /* Recent Sessions */
+    .history-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    }
+
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .history-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .history-empty {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      text-align: center;
+      padding: 16px 0;
+    }
+
+    .history-item {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.78rem;
+    }
+
+    .history-dest {
+      font-family: 'JetBrains Mono', monospace;
+      color: #fca5a5;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .history-copy-btn {
+      background: rgba(239, 68, 68, 0.15);
+      border: none;
+      border-radius: 4px;
+      color: #fee2e2;
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(50px);
+      background: rgba(18, 10, 14, 0.95);
+      border: 1px solid var(--accent-red);
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7), 0 0 14px var(--accent-red-glow);
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    .app-footer {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-dim);
+    }
+
+    .footer-brand {
+      color: #f87171;
+      text-decoration: none;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header-card">
+      <div class="brand-group">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <h1>ShortnerBypass</h1>
+          <div class="small-caps-subtitle">ᴩʀσᴠιᴅєʀʙσтᴢ • ᴧυтσ ʙʏᴩᴧѕѕ</div>
+        </div>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span id="userStatusTag">READY</span>
+      </div>
+    </header>
+
+    <!-- Main Card -->
+    <main class="action-card">
+      <div class="input-label">
+        <span>Target Shortlink</span>
+        <span style="font-size: 0.72rem; color: #ef4444; font-family: 'JetBrains Mono', monospace;">AUTO DETECT</span>
+      </div>
+
+      <div class="input-wrapper">
+        <input 
+          type="url" 
+          id="urlInput" 
+          class="url-input" 
+          placeholder="Paste supported URL (https://...)" 
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button id="pasteBtn" class="input-action-btn" title="Paste from clipboard">PASTE</button>
+      </div>
+
+      <!-- PRIMARY BYPASS BUTTON -->
+      <button id="bypassBtn" class="btn btn-primary">
+        <span id="btnIcon">⚡</span>
+        <span id="btnText">BYPASS LINK</span>
+      </button>
+
+      <!-- Supported Features Bar -->
+      <div class="providers-bar">
+        <span>Engine Mode:</span>
+        <div class="providers-list">
+          <span class="provider-tag">⚡ Fast Bypass</span>
+          <span class="provider-tag">🛡 Zero Ads</span>
+        </div>
+      </div>
+
+      <!-- Progressive Loading Box -->
+      <div id="progressBox" class="progress-box">
+        <div class="progress-header">
+          <div class="spinner"></div>
+          <div>
+            <div class="progress-title" id="progressTitle">🔄 ʙʏᴘᴀѕѕιɴɢ...</div>
+            <div class="progress-step-text" id="progressStep">Initializing bypass job...</div>
+          </div>
+        </div>
+        <div class="progress-bar-track">
+          <div id="progressBarFill" class="progress-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- Result Card -->
+      <div id="resultCard" class="result-card">
+        <div class="result-badge-row">
+          <div class="result-title">
+            <span>✅</span>
+            <span>ʙʏᴘᴀѕѕ ᴄσᴍᴘʟєтє</span>
+          </div>
+          <span id="providerBadge" class="meta-tag">⚡ FAST BYPASS</span>
+        </div>
+
+        <div class="url-display-box">
+          <span class="url-label">Final Bypassed Destination:</span>
+          <a id="resultUrl" class="url-value" href="#" target="_blank" rel="noopener noreferrer">https://example.com/download</a>
+          <span class="url-label" style="margin-top: 6px;">Original Link:</span>
+          <span id="originalUrl" class="url-orig-value">https://short.link/xyz</span>
+        </div>
+
+        <!-- SEMANTIC COLORED BUTTONS -->
+        <div class="result-actions-grid">
+          <!-- SUCCESS: COPY LINK (PROMINENT FULL WIDTH) -->
+          <button id="copyResultBtn" class="btn btn-success">
+            <span>📋</span>
+            <span>COPY BYPASSED LINK</span>
+          </button>
+
+          <div class="action-row-split">
+            <!-- PRIMARY: OPEN LINK -->
+            <a id="openResultBtn" class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer">
+              <span>🔗</span>
+              <span>OPEN</span>
+            </a>
+
+            <!-- CHANNEL: PROVIDERBOTZ -->
+            <a class="btn btn-channel" href="https://t.me/ProviderBotz" target="_blank" rel="noopener noreferrer">
+              <span>📢</span>
+              <span>UPDATES</span>
+            </a>
+          </div>
+
+          <!-- DANGER / RESET: BYPASS ANOTHER -->
+          <button id="resetBtn" class="btn btn-outline" style="padding: 10px; font-size: 0.8rem;">
+            🔄 Bypass Another Link
+          </button>
+        </div>
+      </div>
+
+      <!-- Error Card -->
+      <div id="errorCard" class="error-card">
+        <div class="error-header">
+          <span>❌</span>
+          <span>ʙʏᴘᴀѕѕ ꜰαιʟєᴅ</span>
+        </div>
+        <div id="errorText" class="error-text">The link could not be bypassed right now. All promotional ads and intermediate messages are filtered. Please verify the link.</div>
+        <button id="retryErrorBtn" class="btn btn-danger" style="padding: 10px; font-size: 0.82rem;">
+          🔄 Retry Bypass
+        </button>
+      </div>
+    </main>
+
+    <!-- Vibrant ProviderBotz Channel Banner -->
+    <aside class="channel-banner">
+      <div class="channel-banner-info">
+        <span class="channel-banner-title">🟣 ProviderBotz Official</span>
+        <span class="channel-banner-sub">Join for daily updates, bypass bot news & perks</span>
+      </div>
+      <a href="https://t.me/ProviderBotz" target="_blank" rel="noopener noreferrer" class="btn btn-channel" style="width: auto; padding: 8px 14px; font-size: 0.8rem; border-radius: var(--radius-sm);">
+        JOIN
+      </a>
+    </aside>
+
+    <!-- Recent Links History -->
+    <section class="history-card">
+      <div class="history-header">
+        <span class="history-title">Recent Session Bypasses</span>
+        <button id="clearHistoryBtn" style="background:none;border:none;color:var(--text-dim);font-size:0.7rem;cursor:pointer;">Clear</button>
+      </div>
+      <div id="historyList" class="history-list">
+        <div class="history-empty">No links bypassed yet this session</div>
+      </div>
+    </section>
+
+    <!-- Footer with @ProviderBotz branding -->
+    <footer class="app-footer">
+      Powered by <a href="https://t.me/ProviderBotz" target="_blank" rel="noopener noreferrer" class="footer-brand">@ProviderBotz</a> • ShortnerBypass v3.0
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <span id="toastIcon">📋</span>
+    <span id="toastMessage">Copied to clipboard!</span>
+  </div>
+
+  <script>
+    // Initialize Telegram WebApp SDK if available
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      try {
+        if (tg.setHeaderColor) tg.setHeaderColor('#0e0a0d');
+        if (tg.setBackgroundColor) tg.setBackgroundColor('#060507');
+      } catch (e) {}
+
+      if (tg.initDataUnsafe?.user?.first_name) {
+        document.getElementById('userStatusTag').textContent = tg.initDataUnsafe.user.first_name.toUpperCase();
+      }
+    }
+
+    // Elements
+    const urlInput = document.getElementById('urlInput');
+    const pasteBtn = document.getElementById('pasteBtn');
+    const bypassBtn = document.getElementById('bypassBtn');
+    const btnText = document.getElementById('btnText');
+    const btnIcon = document.getElementById('btnIcon');
+    const progressBox = document.getElementById('progressBox');
+    const progressTitle = document.getElementById('progressTitle');
+    const progressStep = document.getElementById('progressStep');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const resultCard = document.getElementById('resultCard');
+    const resultUrl = document.getElementById('resultUrl');
+    const originalUrl = document.getElementById('originalUrl');
+    const providerBadge = document.getElementById('providerBadge');
+    const copyResultBtn = document.getElementById('copyResultBtn');
+    const openResultBtn = document.getElementById('openResultBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const errorCard = document.getElementById('errorCard');
+    const errorText = document.getElementById('errorText');
+    const retryErrorBtn = document.getElementById('retryErrorBtn');
+    const historyList = document.getElementById('historyList');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    const toast = document.getElementById('toast');
+
+    let historyItems = [];
+    try {
+      const stored = sessionStorage.getItem('providerbotz_history');
+      if (stored) historyItems = JSON.parse(stored);
+    } catch(e) {}
+    renderHistory();
+
+    function triggerHaptic(type) {
+      if (tg?.HapticFeedback) {
+        if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
+        else if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
+        else tg.HapticFeedback.impactOccurred('medium');
+      }
+    }
+
+    function showToast(msg, icon = '📋') {
+      document.getElementById('toastMessage').textContent = msg;
+      document.getElementById('toastIcon').textContent = icon;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // Check for auto-copy URL param (?copy=...) or direct bypass (?url=...)
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const copyUrl = params.get('copy');
+      const directUrl = params.get('url');
+
+      if (copyUrl) {
+        showResult("Direct Copy", copyUrl, "PROVIDERBOTZ", "Instant");
+        copyLinkToClipboard(copyUrl);
+      } else if (directUrl) {
+        urlInput.value = directUrl;
+        startBypass();
+      }
+    });
+
+    // Paste handler
+    pasteBtn.addEventListener('click', async () => {
+      triggerHaptic('light');
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          urlInput.value = text.trim();
+          showToast('URL pasted from clipboard', '📌');
+        }
+      } catch (err) {
+        urlInput.focus();
+      }
+    });
+
+    // Reset UI to clean state
+    function resetView() {
+      progressBox.classList.remove('active');
+      resultCard.classList.remove('active');
+      errorCard.classList.remove('active');
+      bypassBtn.disabled = false;
+      btnText.textContent = 'BYPASS LINK';
+      btnIcon.textContent = '⚡';
+      progressBarFill.style.width = '20%';
+    }
+
+    resetBtn.addEventListener('click', () => {
+      triggerHaptic('light');
+      resetView();
+      urlInput.value = '';
+      urlInput.focus();
+    });
+
+    retryErrorBtn.addEventListener('click', () => {
+      triggerHaptic('light');
+      startBypass();
+    });
+
+    // Bypass execution
+    async function startBypass() {
+      let rawUrl = urlInput.value.trim();
+      if (!rawUrl) {
+        showToast('Please enter or paste a URL first', '⚠️');
+        triggerHaptic('error');
+        urlInput.focus();
+        return;
+      }
+
+      if (!rawUrl.startsWith('http://') && !rawUrl.startsWith('https://')) {
+        rawUrl = 'https://' + rawUrl;
+        urlInput.value = rawUrl;
+      }
+
+      triggerHaptic('medium');
+      resetView();
+
+      bypassBtn.disabled = true;
+      btnText.textContent = 'PROCESSING...';
+      btnIcon.textContent = '⏳';
+      progressBox.classList.add('active');
+
+      const stages = [
+        { title: '🔄 ʙʏᴘᴀѕѕιɴɢ...', text: 'Initializing secure bypass job...', width: '30%' },
+        { title: '⏳ ᴘʀσᴄєѕѕιɴɢ...', text: 'Dispatching to Telegram bypass engine...', width: '55%' },
+        { title: '🔍 ᴠєʀιꜰʏιɴɢ...', text: 'Filtering ads & extracting clean destination...', width: '80%' },
+        { title: '🔗 ʀєѕυʟт ᴅєтєᴄтєᴅ...', text: 'Validating final link...', width: '92%' }
+      ];
+
+      let stageIdx = 0;
+      const stageTimer = setInterval(() => {
+        stageIdx++;
+        if (stageIdx < stages.length) {
+          progressTitle.textContent = stages[stageIdx].title;
+          progressStep.textContent = stages[stageIdx].text;
+          progressBarFill.style.width = stages[stageIdx].width;
+        }
+      }, 2500);
+
+      try {
+        const response = await fetch(`/bypass?url=${encodeURIComponent(rawUrl)}`);
+        clearInterval(stageTimer);
+        const data = await response.json();
+
+        progressBox.classList.remove('active');
+        bypassBtn.disabled = false;
+        btnText.textContent = 'BYPASS LINK';
+        btnIcon.textContent = '⚡';
+
+        if (response.ok && data.status === true && data.url) {
+          triggerHaptic('success');
+          showResult(rawUrl, data.url, data.source || 'dzhq', data.response_ms);
+          saveHistory(data.url, data.source);
+        } else {
+          triggerHaptic('error');
+          showError(data.message || 'Unable to bypass this link with active providers.');
+        }
+      } catch (err) {
+        clearInterval(stageTimer);
+        progressBox.classList.remove('active');
+        bypassBtn.disabled = false;
+        btnText.textContent = 'BYPASS LINK';
+        btnIcon.textContent = '⚡';
+        triggerHaptic('error');
+        showError('Network request failed. Ensure the server is online.');
+      }
+    }
+
+    bypassBtn.addEventListener('click', startBypass);
+
+    urlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        startBypass();
+      }
+    });
+
+    function showResult(orig, finalUrl, source, ms) {
+      resultUrl.textContent = finalUrl;
+      resultUrl.href = finalUrl;
+      originalUrl.textContent = orig;
+      openResultBtn.href = finalUrl;
+      providerBadge.textContent = '⚡ FAST BYPASS' + (ms ? ` • ${ms}` : '');
+      resultCard.classList.add('active');
+    }
+
+    function showError(msg) {
+      errorText.textContent = msg;
+      errorCard.classList.add('active');
+    }
+
+    function copyLinkToClipboard(textToCopy) {
+      if (!textToCopy) return;
+      try {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          triggerHaptic('success');
+          showToast('Bypassed link copied!', '✅');
+        }).catch(() => fallbackCopy(textToCopy));
+      } catch (err) {
+        fallbackCopy(textToCopy);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      triggerHaptic('success');
+      showToast('Bypassed link copied!', '✅');
+    }
+
+    copyResultBtn.addEventListener('click', () => {
+      const textToCopy = resultUrl.textContent;
+      copyLinkToClipboard(textToCopy);
+    });
+
+    function saveHistory(url, source) {
+      const item = { url, source, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+      historyItems.unshift(item);
+      if (historyItems.length > 8) historyItems.pop();
+      try {
+        sessionStorage.setItem('providerbotz_history', JSON.stringify(historyItems));
+      } catch(e) {}
+      renderHistory();
+    }
+
+    function renderHistory() {
+      if (!historyItems.length) {
+        historyList.innerHTML = '<div class="history-empty">No links bypassed yet this session</div>';
+        return;
+      }
+      historyList.innerHTML = historyItems.map((item, idx) => `
+        <div class="history-item">
+          <span class="history-dest" title="${item.url}">${item.url}</span>
+          <button class="history-copy-btn" onclick="copyHistoryItem(${idx})">Copy</button>
+        </div>
+      `).join('');
+    }
+
+    window.copyHistoryItem = function(idx) {
+      const item = historyItems[idx];
+      if (item && item.url) {
+        copyLinkToClipboard(item.url);
+      }
+    };
+
+    clearHistoryBtn.addEventListener('click', () => {
+      historyItems = [];
+      sessionStorage.removeItem('providerbotz_history');
+      renderHistory();
+      showToast('History cleared', '🗑');
+    });
+  </script>
+</body>
+</html>
